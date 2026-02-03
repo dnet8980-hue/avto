@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoMarket – Сатып алу</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 0; }
+    header { background: #1a1a1a; color: white; padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 24px; font-weight: bold; color: #ff4d4d; }
+    nav a { color: white; text-decoration: none; margin-left: 20px; font-weight: 500; }
+    nav a.active { color: #ff4d4d; }
+
+    .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+    h2 { color: #333; margin-bottom: 25px; }
+
+    .car-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+    }
+
+    .car-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+    .car-card:hover { transform: translateY(-5px); }
+
+    .car-img {
+      width: 100%;
+      height: 200px;
+      background-size: cover;
+      background-position: center;
+      background-color: #ddd;
+    }
+
+    .car-info { padding: 20px; }
+    .car-info h3 { margin: 0 0 10px; font-size: 18px; color: #222; }
+    .price { font-size: 20px; font-weight: bold; color: #e63946; margin-bottom: 8px; }
+    .car-info p { margin: 5px 0; color: #666; font-size: 14px; }
+
+    /* Банк батырмалары */
+    .bank-links { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+    
+    .bank-btn {
+      flex: 1;
+      text-align: center;
+      text-decoration: none;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: bold;
+      color: white;
+      transition: 0.3s;
+    }
+    
+    .kaspi { background: #f14635; } /* Kaspi Red */
+    .halyk { background: #00a05a; } /* Halyk Green */
+    .wa-btn { 
+      width: 100%; 
+      background: #25d366; 
+      color: white; 
+      text-align: center; 
+      text-decoration: none; 
+      padding: 10px; 
+      border-radius: 8px; 
+      display: block; 
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">AutoMarket</div>
+  <nav>
+    <a href="index.html">Басты бет</a>
+    <a href="sale.html" class="active">Сатып алу</a>
+    <a href="sell.html">Сату</a>
+  </nav>
+</header>
+
+<div class="container">
+  <h2>🚗 Сатылымдағы автокөліктер</h2>
+  <div class="car-grid" id="carGrid"></div>
+</div>
+
+<script>
+const cars = [
+  { title:"Toyota Camry 2020", price:12000000, chars:"2.5 | Бензин | Автомат", img:"images/cars/camry.jpg" },
+  { title:"Honda Accord 2019", price:11500000, chars:"2.4 | Бензин | Автомат", img:"images/cars/accord.jpg" },
+  { title:"BMW X5 2021", price:25000000, chars:"3.0 | Дизель | Автомат", img:"images/cars/bmw-x5.jpg" },
+  { title:"Mercedes GLE 2020", price:28000000, chars:"3.0 | Бензин | Автомат", img:"images/cars/gle.jpg" },
+  { title:"Toyota Venza 2022", price:13500000, chars:"2.0 | Бензин | Автомат", img:"images/cars/venza.jpg" },
+  { title:"Nissan X-Trail 2018", price:10500000, chars:"2.0 | Бензин | Автомат", img:"images/cars/xtrail.jpg" },
+  { title:"Mazda CX-5 2020", price:14500000, chars:"2.5 | Бензин | Автомат", img:"images/cars/cx5.jpg" },
+  { title:"Kia Sportage 2019", price:12500000, chars:"2.0 | Дизель | Автомат", img:"images/cars/sportage.jpg" },
+  { title:"Hyundai Tucson 2021", price:15000000, chars:"2.4 | Бензин | Автомат", img:"images/cars/tucson.jpg" },
+  { title:"Ford Explorer 2019", price:23000000, chars:"3.0 | Бензин | Автомат", img:"images/cars/explorer.jpg" },
+  { title:"Chevrolet Tahoe 2020", price:26000000, chars:"5.3 | Бензин | Автомат", img:"images/cars/tahoe.jpg" },
+  { title:"Toyota RAV4 2021", price:15500000, chars:"2.5 | Бензин | Автомат", img:"images/cars/rav4.jpg" },
+  { title:"Honda CR-V 2020", price:15000000, chars:"2.4 | Бензин | Автомат", img:"images/cars/crv.jpg" },
+  { title:"BMW X3 2021", price:22000000, chars:"2.0 | Дизель | Автомат", img:"images/cars/bmw-x3.jpg" },
+  { title:"Audi Q7 2020", price:27000000, chars:"3.0 | Бензин | Автомат", img:"images/cars/q7.jpg" },
+  { title:"Toyota RAV4 2024", price:18500000, chars:"2.5 | Бензин | Автомат", img:"images/cars/rav4-2024.jpg" },
+  { title:"Toyota 4Runner 2004", price:8500000, chars:"4.0 | Бензин | Автомат", img:"images/cars/4runner-2004.jpg" },
+  { title:"Toyota Land Cruiser Prado 2022", price:32000000, chars:"4.0 | Бензин | Автомат", img:"images/cars/prado-2022.jpg" },
+  { title:"Toyota Windom MCV20 2001", price:4500000, chars:"2.5 | Бензин | Автомат", img:"images/cars/windom-mcv20-2001.jpg" }
+];
+
+const carGrid = document.getElementById('carGrid');
+
+cars.forEach(car => {
+  const card = document.createElement('div');
+  card.className = 'car-card';
+  card.innerHTML = `
+    <div class="car-img" style="background-image: url('${car.img}')"></div>
+    <div class="car-info">
+      <h3>${car.title}</h3>
+      <p class="price">${car.price.toLocaleString()} ₸</p>
+      <p>${car.chars}</p>
+      
+      <div class="bank-links">
+        <a href="kaspi://kaspi.kz" class="bank-btn kaspi">Kaspi-мен төлеу</a>
+        <a href="halykbank://halykbank.kz" class="bank-btn halyk">Halyk-пен төлеу</a>
+      </div>
+
+      <a href="https://wa.me/77761874008?text=Сәлеметсізбе! ${car.title} бойынша хабарласып тұрмын." class="wa-btn">WhatsApp-қа жазу</a>
+    </div>
+  `;
+  carGrid.appendChild(card);
+});
+</script>
+
+</body>
+</html>

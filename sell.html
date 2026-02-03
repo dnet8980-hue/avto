@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoMarket – Көлік саудасы</title>
+<style>
+:root {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --accent: #8b5cf6; /* Күлгін екпін */
+    --text-main: #f8fafc;
+    --text-dim: #94a3b8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+/* ===== Navigation ===== */
+header {
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(12px);
+    padding: 20px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.logo { font-size: 24px; font-weight: 800; color: var(--accent); letter-spacing: -1px; }
+
+/* ===== Form Section ===== */
+.hero-form {
+    padding: 60px 5%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.sell-card {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+}
+
+.grid-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid #334155;
+    background: #0f172a;
+    color: white;
+    font-size: 14px;
+}
+
+input:focus { outline: none; border-color: var(--accent); }
+
+.full-width { grid-column: span 2; }
+
+.btn-submit {
+    width: 100%;
+    padding: 15px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-submit:hover { opacity: 0.9; transform: translateY(-2px); }
+
+/* ===== Car Display ===== */
+.content { padding: 40px 5%; }
+.section-title { font-size: 28px; margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
+.section-title::after { content: ""; height: 2px; flex: 1; background: rgba(255,255,255,0.1); }
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.car-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    overflow: hidden;
+    transition: 0.3s;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.car-card:hover { transform: translateY(-8px); border-color: var(--accent); }
+
+.car-card img { width: 100%; height: 200px; object-fit: cover; }
+
+.car-info { padding: 20px; }
+.car-info h3 { font-size: 18px; margin-bottom: 8px; }
+.car-info p { font-size: 13px; color: var(--text-dim); margin-bottom: 4px; }
+.car-price { font-size: 20px; font-weight: 700; color: #10b981; margin-top: 10px; }
+
+@media (max-width: 600px) { .grid-inputs { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="logo">AUTOMARKET</div>
+    <nav><a href="index.html" style="color:white; text-decoration:none; font-size:14px;">← Басты бет</a></nav>
+</header>
+
+<section class="hero-form">
+    <div class="sell-card">
+        <h2 style="margin-bottom:20px;">Көлікті сатуға қою</h2>
+        <form id="carForm">
+            <div class="grid-inputs">
+                <input type="text" placeholder="Марка (Мысалы: Toyota)" required>
+                <input type="text" placeholder="Модель" required>
+                <input type="number" placeholder="Жылы" required>
+                <input type="text" placeholder="Қозғалтқыш көлемі" required>
+                <select class="full-width">
+                    <option value="Автомат">Автомат</option>
+                    <option value="Механика">Механика</option>
+                </select>
+                <input type="number" placeholder="Бағасы ₸" class="full-width" required>
+                <input type="file" id="imgInput" accept="image/*" class="full-width">
+            </div>
+            <button type="button" class="btn-submit" onclick="addCar()">Жариялау</button>
+        </form>
+    </div>
+</section>
+
+<main class="content">
+    <h2 class="section-title">Қолжетімді көліктер</h2>
+    <div id="staticCars" class="cards-grid"></div>
+
+    <h2 class="section-title" style="margin-top:60px;">Сіздің жарнамаларыңыз</h2>
+    <div id="userCars" class="cards-grid"></div>
+</main>
+
+<script>
+// ===== БАЗАДАҒЫ МАШИНАЛАР =====
+const cars = [
+  { title:"Toyota Camry 2020", price:12000000, chars:"2.5 | Бензин | Автомат", img:"images/cars/camry.jpg" },
+  { title:"Honda Accord 2019", price:11500000, chars:"2.4 | Бензин | Автомат", img:"images/cars/accord.jpg" },
+  { title:"BMW X5 2021", price:25000000, chars:"3.0 | Дизель | Автомат", img:"images/cars/bmw-x5.jpg" },
+  { title:"Mercedes GLE 2020", price:28000000, chars:"3.0 | Бензин | Автомат", img:"images/cars/gle.jpg" },
+  { title:"Toyota Venza 2022", price:13500000, chars:"2.0 | Бензин | Автомат", img:"images/cars/venza.jpg" },
+  { title:"Nissan X-Trail 2018", price:10500000, chars:"2.0 | Бензин | Автомат", img:"images/cars/xtrail.jpg" },
+  { title:"Mazda CX-5 2020", price:14500000, chars:"2.5 | Бензин | Автомат", img:"images/cars/cx5.jpg" },
+  { title:"Kia Sportage 2019", price:12500000, chars:"2.0 | Дизель | Автомат", img:"images/cars/sportage.jpg" },
+  { title:"Hyundai Tucson 2021", price:15000000, chars:"2.4 | Бензин | Автомат", img:"images/cars/tucson.jpg" },
+  { title:"Ford Explorer 2019", price:23000000, chars:"3.0 | Бензин | Автомат", img:"images/cars/explorer.jpg" },
+  { title:"Chevrolet Tahoe 2020", price:26000000, chars:"5.3 | Бензин | Автомат", img:"images/cars/tahoe.jpg" },
+  { title:"Toyota RAV4 2021", price:15500000, chars:"2.5 | Бензин | Автомат", img:"images/cars/rav4.jpg" },
+  { title:"Honda CR-V 2020", price:15000000, chars:"2.4 | Бензин | Автомат", img:"images/cars/crv.jpg" },
+  { title:"BMW X3 2021", price:22000000, chars:"2.0 | Дизель | Автомат", img:"images/cars/bmw-x3.jpg" },
+  { title:"Audi Q7 2020", price:27000000, chars:"3.0 | Бензин | Автомат", img:"images/cars/q7.jpg" },
+  { title:"Toyota RAV4 2024", price:18500000, chars:"2.5 | Бензин | Автомат", img:"images/cars/rav4-2024.jpg" },
+  { title:"Toyota 4Runner 2004", price:8500000, chars:"4.0 | Бензин | Автомат", img:"images/cars/4runner-2004.jpg" },
+  { title:"Toyota Land Cruiser Prado 2022", price:32000000, chars:"4.0 | Бензин | Автомат", img:"images/cars/prado-2022.jpg" },
+  { title:"Toyota Windom MCV20 2001", price:4500000, chars:"2.5 | Бензин | Автомат", img:"images/cars/windom-mcv20-2001.jpg" }
+];
+
+function displayStaticCars() {
+    const container = document.getElementById('staticCars');
+    cars.forEach(car => {
+        container.innerHTML += `
+            <div class="car-card">
+                <img src="${car.img}" onerror="this.src='https://via.placeholder.com/400x250?text=AutoMarket'">
+                <div class="car-info">
+                    <h3>${car.title}</h3>
+                    <p>${car.chars}</p>
+                    <div class="car-price">${car.price.toLocaleString()} ₸</div>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function addCar() {
+    const form = document.getElementById('carForm');
+    const brand = form[0].value;
+    const model = form[1].value;
+    const year = form[2].value;
+    const engine = form[3].value;
+    const gear = form[4].value;
+    const price = form[5].value;
+    const imgFile = document.getElementById('imgInput').files[0];
+
+    if(!brand || !price || !imgFile) return alert("Міндетті өрістерді толтырыңыз!");
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const newCar = {
+            title: `${brand} ${model} ${year}`,
+            chars: `${engine} л | Автомат`,
+            price: parseInt(price),
+            img: e.target.result
+        };
+        const userList = JSON.parse(localStorage.getItem('userMarketCars') || '[]');
+        userList.push(newCar);
+        localStorage.setItem('userMarketCars', JSON.stringify(userList));
+        renderUserCars();
+        form.reset();
+    };
+    reader.readAsDataURL(imgFile);
+}
+
+function renderUserCars() {
+    const container = document.getElementById('userCars');
+    const userList = JSON.parse(localStorage.getItem('userMarketCars') || '[]');
+    container.innerHTML = userList.length ? '' : '<p style="color:#666">Жарнамаларыңыз жоқ</p>';
+    userList.forEach(car => {
+        container.innerHTML += `
+            <div class="car-card">
+                <img src="${car.img}">
+                <div class="car-info">
+                    <h3>${car.title}</h3>
+                    <p>${car.chars}</p>
+                    <div class="car-price">${car.price.toLocaleString()} ₸</div>
+                </div>
+            </div>
+        `;
+    });
+}
+
+displayStaticCars();
+renderUserCars();
+</script>
+</body>
+</html>
