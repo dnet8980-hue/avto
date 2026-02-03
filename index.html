@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoMarket | Premium Selection</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <div class="header-container">
+    <div class="logo">AUTO<span>MARKET</span></div>
+    <nav>
+      <a href="index.html">Басты бет</a>
+      <a href="sale.html">Каталог</a>
+      <a href="sell.html">Сату</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>Көлік саудасындағы сенімді серіктес</h1>
+    <p>Сатып алыңыз, сатыңыз, кредит рәсімдеңіз — бәрі бір жерде.</p>
+    <div class="main-actions">
+      <a href="sale.html" class="btn btn-primary">🚗 Сатып алу</a>
+      <a href="sell.html" class="btn btn-outline">📝 Машина сату</a>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  
+  <section class="section">
+    <h2 class="section-title">🏦 Серіктес банктер</h2>
+    <div class="grid-banks">
+      <div class="bank-card kaspi">
+        <div class="bank-logo">Kaspi</div>
+        <p>Сыйақы мөлшерлемесі: <strong>18%</strong></p>
+        <span>Мақұлдау: 5 мин</span>
+      </div>
+      <div class="bank-card halyk">
+        <div class="bank-logo">Halyk</div>
+        <p>Сыйақы мөлшерлемесі: <strong>17.5%</strong></p>
+        <span>Мақұлдау: 10 мин</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section glass-calc">
+    <h2 class="section-title">💳 Кредит есептеу</h2>
+    <div class="calc-wrapper">
+      <div class="input-group">
+        <label>Көлік бағасы (₸)</label>
+        <input type="number" id="price" placeholder="Мысалы: 5 000 000">
+      </div>
+      <div class="input-group">
+        <label>Мерзімі (ай)</label>
+        <input type="number" id="months" placeholder="Мысалы: 60">
+      </div>
+      <button onclick="calculateCredit()" class="btn-calc">Есептеу</button>
+      <div id="result" class="calc-result"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="contact-card">
+      <h2>📞 Бізбен байланыс</h2>
+      <p>Сұрақтарыңыз бар ма? Жазыңыз немесе қоңырау шалыңыз!</p>
+      <div class="contact-links">
+        <a href="tel:+77761874008" class="phone">+7 (776) 187 4008</a>
+        <a href="https://wa.me/77761874008" class="whatsapp">WhatsApp арқылы жазу</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="map-box">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2503.7!2d71.4!3d51.1!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTHCsDA2JzAwLjAiTiA3McKwMjQnMDAuMCJF!5e0!3m2!1skk!2skz!4v1610000000000" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <p>© 2026 AutoMarket Premium. Барлық құқықтар қорғалған.</p>
+</footer>
+
+<script>
+function calculateCredit() {
+  const p = document.getElementById('price').value;
+  const m = document.getElementById('months').value;
+  const res = document.getElementById('result');
+  if(p > 0 && m > 0) {
+    const monthly = (p * 1.18) / m;
+    res.innerHTML = `Ай сайынғы төлем: <span>${Math.round(monthly).toLocaleString()} ₸</span>`;
+    res.classList.add('show');
+  }
+}
+</script>
+
+</body>
+</html>
